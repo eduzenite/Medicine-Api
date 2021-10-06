@@ -134,16 +134,16 @@ class FakerSeeder extends Seeder
             $MedicineCategory->category_id = Category::inRandomOrder()->first()->id;
             $MedicineCategory->save();
 
+            $folder = 'storage/app/public/medicines/'.$medicine->id;
+            if(!is_dir($folder)) {
+                mkdir($folder, 0755, true);
+            }
             foreach(range(0, 5) as $item){
                 $Attachment = new Attachment();
                 $Attachment->name = $faker->sentence(6, true);
                 $Attachment->type = 'image/jpeg';
                 $Attachment->save();
 
-                $folder = 'storage/medicines/'.$medicine->id;
-                if(!is_dir($folder)) {
-                    mkdir($folder, 0755, true);
-                }
                 $images = [
                     'title' => $faker->sentence(15, true),
                     'alt' => $faker->sentence(10, true),
