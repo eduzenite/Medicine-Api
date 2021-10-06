@@ -22,7 +22,8 @@ class ActiveIngredientFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'name' => $this->faker->name(),
+            'description' => $this->faker->sentence(6, true)
         ];
     }
 }

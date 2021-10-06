@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Attachment extends Model
 {
     use HasFactory;
-    protected $fillable = ['title', 'type'];
+    protected $fillable = ['name', 'type'];
 
     public function medicines()
     {

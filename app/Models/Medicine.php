@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Medicine extends Model
 {
     use HasFactory;
-    protected $fillable = ['active_ingredient_id', 'manufacturer_id', 'name', 'short_name', 'slug', 'sku', 'category_id'];
+    protected $fillable = ['active_ingredient_id', 'manufacturer_id', 'name', 'short_name', 'slug', 'category_id'];
 
     public function active_ingredient()
     {

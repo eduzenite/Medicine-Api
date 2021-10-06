@@ -20,7 +20,6 @@ class CreateMedicinesTable extends Migration
             $table->string('name');
             $table->string('short_name', 150);
             $table->string('slug');
-            $table->string('sku', 150);
             $table->unsignedBigInteger('category_id')->nullable()->foreign('category_id')->references('id')->on('categories');
             $table->timestamps();
         });

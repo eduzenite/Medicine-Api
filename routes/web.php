@@ -1,6 +1,8 @@
 <?php
 
+use App\Models\Medicine;
 use Illuminate\Support\Facades\Route;
+use Faker\Factory as Faker;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,7 +16,11 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+//    return view('welcome');
+    $faker = Faker::create();
+
+
+    echo $faker->sentence(15, true);
 });
 
 Route::get('/dashboard', function () {

@@ -14,6 +14,9 @@ class ManufacturerFactory extends Factory
      */
     protected $model = Manufacturer::class;
 
+
+
+
     /**
      * Define the model's default state.
      *
@@ -22,7 +25,10 @@ class ManufacturerFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'name' => $this->faker->catchPhrase,
+            'page' => $this->faker->url,
+            'email' => $this->faker->email,
+            'phone' => $this->faker->tollFreePhoneNumber,
         ];
     }
 }
