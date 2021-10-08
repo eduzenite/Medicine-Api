@@ -26,15 +26,18 @@ class FakerSeeder extends Seeder
     public function run()
     {
         User::factory(50)->create();
-        Address::factory(10)->create()->each(function ($address) {
-            $faker = Faker::create();
-            $Manufacturer = new Manufacturer();
-            $Manufacturer->name = $faker->catchPhrase;
-            $Manufacturer->page = $faker->url;
-            $Manufacturer->email = $faker->email;
-            $Manufacturer->phone = $faker->tollFreePhoneNumber;
-            $Manufacturer->save();
-            $Manufacturer->addresses()->sync($Manufacturer->id);
+        Manufacturer::factory(10)->create()->each(function () {
+            $Address = new Address();
+            $Address->zipcode = $this->faker->postcode();
+            $Address->country = $this->faker->country();
+            $Address->state = $this->faker->sentence(3, true);
+            $Address->city = $this->faker->city();
+            $Address->district = $this->faker->sentence(3, true);
+            $Address->address = $this->faker->address();
+            $Address->number = $this->faker->buildingNumber();
+            $Address->complement = $this->faker->firstNameMale();
+            $Address->save();
+            $Address->manufacturer()->sync($Address->id);
         });
         ActiveIngredient::factory(20)->create();
         Category::factory(20)->create();

@@ -1,64 +1,51 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# Api de Medicamentos
+Esse projeto visa testar e mostrar minha habilidades com o Framework Laravel, que utilizo para acelerar o desenvolvimento dos meus projetos. O projeto possui o front padrão do Laravel e todas as funcionalidades que desenvolvi estão disponíveis através de APIs.
+Criei esse projeto me orientando pelos testes (TDD), que foram desenvolvidos primeiro e só então criei os Controllers. Para rodar esse projeto da sua máquina, siga os passos abaixo.
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# Instalação
+Para testar e analisar esse código, faço o clone do projeto na sua máquina ou em algum servidor, então, instale as dependências do projeto, criei o link simbólico do Storage e crie as tabelas no banco de dados.
+```bash
+$ composer install
+$ php artisan storage:link
+$ php artisan migrate
+```
 
-## About Laravel
+# Teste de carga
+Para facilitar os testes, criei um script que irá popular as tabelas do banco com dados fakes.
+```bash
+$ php artisan db:seed --class=FakerSeeder
+```
+Um ponto importante desse script é que tive o cuidado de criar as factories que não precisam de conexão primeiro e cada vez que um item é criado as informações das outras tabelas ligados à esse item são criadas também. Como eu fiz isso? Dá uma olhada nesse código que você vai entender melhor:
+```
+Manufacturer::factory(10)->create()->each(function () {
+    $Address = new Address();
+    $Address->zipcode = $this->faker->postcode();
+    $Address->country = $this->faker->country();
+    $Address->state = $this->faker->sentence(3, true);
+    $Address->city = $this->faker->city();
+    $Address->district = $this->faker->sentence(3, true);
+    $Address->address = $this->faker->address();
+    $Address->number = $this->faker->buildingNumber();
+    $Address->complement = $this->faker->firstNameMale();
+    $Address->save();
+    $Address->manufacturer()->sync($Address->id);
+});
+```
+Toda vez que uma fábrica é criada eu crio um endereço para ela com a função each(). Ela possui uma tabela pivô e na última linha dentro dessa função eu também crio a ligação entre fábrica e endereço.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+# Teste Unitários
+Ao rodar os seguintes scripts, você será capaz de fazer testes unitários dentro da aplicação. Em cada um deles, vejo se a URL da API está retornando 200 e em alguns verifico o retorno do JSON.
+```bash
+$ php artisan test --filter AddressTest
+$ php artisan test --filter CategoryTest
+$ php artisan test --filter IngredientTest
+$ php artisan test --filter ManufacturerTest
+```
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[CMS Max](https://www.cmsmax.com/)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+# Teste de Integração
+Nesses testes eu verifico se as APIs de medicamento estão funcionando corretamente. Os testes MedicineNegativeTest verifico se está retornando corretamente o erro 404 para um medicamento não encontrado. Já nos testes MedicinePositiveTest verifico se as APIs estão listando, criando, exibindo, atualizando e deletando corretamente os itens do banco de dados.
+```bash
+$ php artisan test --filter MedicineNegativeTest
+$ php artisan test --filter MedicinePositiveTest
+```
