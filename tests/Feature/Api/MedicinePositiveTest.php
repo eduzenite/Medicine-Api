@@ -13,6 +13,16 @@ class MedicinePositiveTest extends TestCase
     /**
      * @test
      */
+    public function list_of_medicines()
+    {
+        $response = $this->get(route('medicines.index'));
+        $response->assertStatus(200);
+        $this->withoutExceptionHandling();
+    }
+
+    /**
+     * @test
+     */
     public function creating_a_medicine()
     {
         $faker = Faker::create();
@@ -23,12 +33,11 @@ class MedicinePositiveTest extends TestCase
             'name' => $name,
             'short_name' => $faker->sentence(5, true),
             'slug' => Str::slug($name, '-'),
-            'category_id' => 1
         ];
-
         $this->post(route('medicines.store'), $data)
             ->assertStatus(200)
             ->assertJson($data);
+        $this->withoutExceptionHandling();
     }
 
     /**
@@ -37,6 +46,7 @@ class MedicinePositiveTest extends TestCase
     public function editing_a_medicine()
     {
         $faker = Faker::create();
+        $medicine = Medicine::inRandomOrder()->first();
         $name = $faker->sentence(10, true);
         $data = [
             'active_ingredient_id' => 1,
@@ -44,12 +54,11 @@ class MedicinePositiveTest extends TestCase
             'name' => $name,
             'short_name' => $faker->sentence(5, true),
             'slug' => Str::slug($name, '-'),
-            'category_id' => 1
         ];
-
-        $this->put(route('medicines.update', ['id' => 1]), $data)
+        $this->put(route('medicines.update', ['id' => $medicine->id]), $data)
             ->assertStatus(200)
             ->assertJson($data);
+        $this->withoutExceptionHandling();
     }
 
     /**
@@ -57,8 +66,10 @@ class MedicinePositiveTest extends TestCase
      */
     public function deleting_a_medicine()
     {
-        $this->put(route('medicines.destroy', ['id' => 1]))
+        $medicine = Medicine::inRandomOrder()->first();
+        $this->delete(route('medicines.destroy', ['id' => $medicine->id]))
             ->assertStatus(200);
+        $this->withoutExceptionHandling();
     }
 
     /**
@@ -66,7 +77,9 @@ class MedicinePositiveTest extends TestCase
      */
     public function reading_a_medicine()
     {
-        $this->get(route('medicines.show', ['id' => 1]))
+        $medicine = Medicine::inRandomOrder()->first();
+        $this->get(route('medicines.show', ['id' => $medicine->id]))
             ->assertStatus(200);
+        $this->withoutExceptionHandling();
     }
 }

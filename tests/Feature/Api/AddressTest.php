@@ -15,6 +15,7 @@ class AddressTest extends TestCase
     {
         $response = $this->get(route('addresses.index'));
         $response->assertStatus(200);
+        $this->withoutExceptionHandling();
     }
 
     /**
@@ -25,6 +26,7 @@ class AddressTest extends TestCase
         $response = $this->post(route('addresses.store'));
         $response->assertStatus(200);
         $response->assertJson(['id' => 1]);
+        $this->withoutExceptionHandling();
     }
 
     /**
@@ -36,6 +38,7 @@ class AddressTest extends TestCase
         $response = $this->get(route('addresses.show', ['id' => $id]));
         $response->assertStatus(200);
         $response->assertJson(['id' => $id]);
+        $this->withoutExceptionHandling();
     }
 
     /**
@@ -47,6 +50,7 @@ class AddressTest extends TestCase
         $response = $this->put(route('addresses.update', ['id' => $id]));
         $response->assertStatus(200);
         $response->assertJson(['updated' => true, 'id' => $id]);
+        $this->withoutExceptionHandling();
     }
 
     /**
@@ -57,6 +61,7 @@ class AddressTest extends TestCase
         $id = 1;
         $response = $this->delete(route('addresses.destroy', ['id' => $id]));
         $response->assertStatus(200);
-        $response->assertJson(['deleted' => true, 'id' => $id]);;
+        $response->assertJson(['deleted' => true, 'id' => $id]);
+        $this->withoutExceptionHandling();
     }
 }

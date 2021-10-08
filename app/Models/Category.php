@@ -12,6 +12,6 @@ class Category extends Model
 
     public function medicines()
     {
-        return $this->belongsToMany(Medicine::class)->using(MedicineCategory::class);
+        return $this->belongsToMany(Medicine::class);
     }
 }

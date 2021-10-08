@@ -8,10 +8,7 @@ use App\Models\Attachment;
 use App\Models\AttachmentMeta;
 use App\Models\Category;
 use App\Models\Manufacturer;
-use App\Models\ManufacturerAddress;
 use App\Models\Medicine;
-use App\Models\MedicineAttachment;
-use App\Models\MedicineCategory;
 use App\Models\MedicineDescription;
 use App\Models\MedicineMeta;
 use App\Models\User;
@@ -37,15 +34,11 @@ class FakerSeeder extends Seeder
             $Manufacturer->email = $faker->email;
             $Manufacturer->phone = $faker->tollFreePhoneNumber;
             $Manufacturer->save();
-
-            $ManufacturerAddress = new ManufacturerAddress();
-            $ManufacturerAddress->manufacturer_id = $Manufacturer->id;
-            $ManufacturerAddress->address_id = $address->id;
-            $ManufacturerAddress->save();
+            $Manufacturer->addresses()->sync($Manufacturer->id);
         });
         ActiveIngredient::factory(20)->create();
         Category::factory(20)->create();
-        Medicine::factory(20)->create()->each(function ($medicine) {
+        Medicine::factory(10)->create()->each(function ($medicine) {
             $faker = Faker::create();
             $Indications = new MedicineDescription();
             $Indications->medicine_id= $medicine->id;
@@ -129,10 +122,11 @@ class FakerSeeder extends Seeder
             $especialidades->value = $faker->sentence(20, true);
             $especialidades->save();
 
-            $MedicineCategory = new MedicineCategory();
-            $MedicineCategory->medicine_id = $medicine->id;
-            $MedicineCategory->category_id = Category::inRandomOrder()->first()->id;
-            $MedicineCategory->save();
+            $categories = Category::inRandomOrder()->limit(3)->get();
+            foreach ($categories as $category){
+                $cat[] = $category->id;
+            }
+            $medicine->categories()->sync($cat);
 
             $folder = 'storage/app/public/medicines/'.$medicine->id;
             if(!is_dir($folder)) {
@@ -171,12 +165,9 @@ class FakerSeeder extends Seeder
                 $AttachmentMeta->key = 'file_info';
                 $AttachmentMeta->value = json_encode($images);
                 $AttachmentMeta->save();
-
-                $MedicineAttachment = new MedicineAttachment();
-                $MedicineAttachment->medicine_id = $medicine->id;
-                $MedicineAttachment->attachment_id = $Attachment->id;
-                $MedicineAttachment->save();
+                $files[] = $AttachmentMeta->id;
             }
+            $medicine->attachments()->sync($files);
         });
     }
 }

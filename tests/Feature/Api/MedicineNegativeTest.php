@@ -13,7 +13,8 @@ class MedicineNegativeTest extends TestCase
      */
     public function medicine_not_found()
     {
-        $this->get(route('medicines.show', ['id' => 'a']))
+        $this->json('get', route('medicines.show', ['id' => 99]))
             ->assertStatus(404);
+        $this->withoutExceptionHandling();
     }
 }

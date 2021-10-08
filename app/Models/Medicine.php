@@ -8,11 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Medicine extends Model
 {
     use HasFactory;
-    protected $fillable = ['active_ingredient_id', 'manufacturer_id', 'name', 'short_name', 'slug', 'category_id'];
+    protected $fillable = ['active_ingredient_id', 'manufacturer_id', 'name', 'short_name', 'slug'];
 
     public function active_ingredient()
     {
-        return $this->hasOne(ActiveIngredient::class);
+        return $this->belongsTo(ActiveIngredient::class);
     }
 
     public function manufacturer()
@@ -22,17 +22,12 @@ class Medicine extends Model
 
     public function attachments()
     {
-        return $this->hasMany(Attachment::class);
+        return $this->belongsToMany(Attachment::class);
     }
 
     public function categories()
     {
-        return $this->hasMany(Category::class);
-    }
-
-    public function categorie()
-    {
-        return $this->hasOne(Category::class);
+        return $this->belongsToMany(Category::class);
     }
 
     public function descriptions()

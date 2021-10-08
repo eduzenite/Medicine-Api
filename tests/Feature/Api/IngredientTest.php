@@ -15,6 +15,7 @@ class IngredientTest extends TestCase
     {
         $response = $this->get(route('ingredients.index'));
         $response->assertStatus(200);
+        $this->withoutExceptionHandling();
     }
 
     /**
@@ -25,6 +26,7 @@ class IngredientTest extends TestCase
         $response = $this->post(route('ingredients.store'));
         $response->assertStatus(200);
         $response->assertJson(['id' => 1]);
+        $this->withoutExceptionHandling();
     }
 
     /**
@@ -36,6 +38,7 @@ class IngredientTest extends TestCase
         $response = $this->get(route('ingredients.show', ['id' => $id]));
         $response->assertStatus(200);
         $response->assertJson(['id' => $id]);
+        $this->withoutExceptionHandling();
     }
 
     /**
@@ -47,6 +50,7 @@ class IngredientTest extends TestCase
         $response = $this->put(route('ingredients.update', ['id' => $id]));
         $response->assertStatus(200);
         $response->assertJson(['updated' => true, 'id' => $id]);
+        $this->withoutExceptionHandling();
     }
 
     /**
@@ -58,5 +62,6 @@ class IngredientTest extends TestCase
         $response = $this->delete(route('ingredients.destroy', ['id' => $id]));
         $response->assertStatus(200);
         $response->assertJson(['deleted' => true, 'id' => $id]);
+        $this->withoutExceptionHandling();
     }
 }

@@ -32,7 +32,6 @@ class MedicineFactory extends Factory
             'name' => $name,
             'short_name' => $this->faker->sentence(5, true),
             'slug' => Str::slug($name, '-'),
-            'category_id' => Category::inRandomOrder()->first()->id
         ];
     }
 }

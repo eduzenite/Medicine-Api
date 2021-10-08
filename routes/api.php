@@ -3,6 +3,7 @@
 use App\Models\Medicine;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Validator;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,23 +24,77 @@ Route::group([
     "prefix" => "medicines"
 ], function () {
     Route::get('/', function (){
-        return response()->json([]);
+        $medicines = Medicine::paginate(5);
+        if($medicines){
+            return response()->json($medicines);
+        }else{
+            return response()->json(['message' => 'Not Found!'], 404);
+        }
     })->name('medicines.index');
 
     Route::post('/', function (Request $request){
-        return response()->json(array_merge($request->all(), ['id' => 1]));
+        $validator = Validator::make($request->all(), [
+            'active_ingredient_id' => 'required|integer',
+            'manufacturer_id' => 'required|integer',
+            'name' => 'required|string|max:255',
+            'short_name' => 'required|string|max:150',
+            'slug' => 'required|string|max:150',
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 404);
+        }
+        $medicine = new Medicine();
+        $medicine->active_ingredient_id = $request->active_ingredient_id;
+        $medicine->manufacturer_id = $request->manufacturer_id;
+        $medicine->name = $request->name;
+        $medicine->short_name = $request->short_name;
+        $medicine->slug = $request->slug;
+        $medicine->save();
+        return response()->json($medicine);
     })->name('medicines.store');
 
     Route::get('{id}', function ($id){
-        return response()->json(['id' => $id]);
+        $medicine = Medicine::with('manufacturer', 'active_ingredient', 'categories', 'attachments', 'descriptions', 'metas')->find($id);
+        if($medicine){
+            return response()->json($medicine);
+        }else{
+            return response()->json(['message' => 'Not Found!'], 404);
+        }
     })->name('medicines.show');
 
     Route::put('{id}', function (Request $request, $id){
-        return response()->json(array_merge($request->all(), ['updated' => true, 'id' => $id]));
+        $medicine = Medicine::find($id);
+        if($medicine) {
+            $validator = Validator::make($request->all(), [
+                'active_ingredient_id' => 'required|integer',
+                'manufacturer_id' => 'required|integer',
+                'name' => 'required|string|max:255',
+                'short_name' => 'required|string|max:150',
+                'slug' => 'required|string|max:150',
+            ]);
+            if ($validator->fails()) {
+                return response()->json($validator->errors(), 404);
+            }
+            $medicine->active_ingredient_id = $request->active_ingredient_id;
+            $medicine->manufacturer_id = $request->manufacturer_id;
+            $medicine->name = $request->name;
+            $medicine->short_name = $request->short_name;
+            $medicine->slug = $request->slug;
+            $medicine->save();
+            return response()->json(array_merge($request->all(), ['updated' => true]));
+        }else{
+            return response()->json(['message' => 'Not Found!'], 404);
+        }
     })->name('medicines.update');
 
     Route::delete('{id}', function ($id){
-        return response()->json(['deleted' => true, 'id' => $id]);
+        $medicine = Medicine::find($id);
+        if($medicine){
+            $medicine->delete();
+            return response()->json(['deleted' => true]);
+        }else{
+            return response()->json(['message' => 'Not Found!'], 404);
+        }
     })->name('medicines.destroy');
 });
 
