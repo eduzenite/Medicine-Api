@@ -7,6 +7,8 @@ Para testar e analisar esse código, faço o clone do projeto na sua máquina ou
 ```bash
 $ composer install
 $ php artisan storage:link
+$ cp .env.testing .env
+$ touch database/memory.sqlite
 $ php artisan migrate
 ```
 
