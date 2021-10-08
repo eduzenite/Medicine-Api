@@ -12,6 +12,6 @@ class Address extends Model
 
     public function manufacturer()
     {
-        return $this->belongsToMany(Manufacturer::class)->using(ManufacturerAddress::class);
+        return $this->belongsToMany(Manufacturer::class);
     }
 }

@@ -27,15 +27,16 @@ class FakerSeeder extends Seeder
     {
         User::factory(50)->create();
         Manufacturer::factory(10)->create()->each(function () {
+            $faker = Faker::create();
             $Address = new Address();
-            $Address->zipcode = $this->faker->postcode();
-            $Address->country = $this->faker->country();
-            $Address->state = $this->faker->sentence(3, true);
-            $Address->city = $this->faker->city();
-            $Address->district = $this->faker->sentence(3, true);
-            $Address->address = $this->faker->address();
-            $Address->number = $this->faker->buildingNumber();
-            $Address->complement = $this->faker->firstNameMale();
+            $Address->zipcode = $faker->postcode();
+            $Address->country = $faker->country();
+            $Address->state = $faker->sentence(3, true);
+            $Address->city = $faker->city();
+            $Address->district = $faker->sentence(3, true);
+            $Address->address = $faker->address();
+            $Address->number = $faker->buildingNumber();
+            $Address->complement = $faker->firstNameMale();
             $Address->save();
             $Address->manufacturer()->sync($Address->id);
         });
